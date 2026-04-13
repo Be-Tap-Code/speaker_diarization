@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống nhận diện giọng nói</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.2em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        header h1 .icon {
+            margin-right: 10px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 15px 20px;
+            font-weight: 600;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-header.blue {
+            background: #1a73e8;
+            color: #fff;
+        }
+
+        .panel-header.green {
+            background: #1e8e5a;
+            color: #fff;
+        }
+
+        .panel-body {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.95em;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #1a73e8;
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: #1a73e8;
+            color: #fff;
+            width: 100%;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #1557b0;
+        }
+
+        .btn-success {
+            background: #1e8e5a;
+            color: #fff;
+            width: 100%;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #167a4a;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: #fff;
+            padding: 6px 10px;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .speaker-list {
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .speaker-list-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #444;
+            font-size: 0.95em;
+        }
+
+        .speaker-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s;
+        }
+
+        .speaker-item:hover {
+            background: #f8f9fa;
+        }
+
+        .speaker-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .speaker-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .speaker-name {
+            font-weight: 500;
+        }
+
+        .speaker-size {
+            color: #888;
+            font-size: 0.85em;
+        }
+
+        .speaker-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .status-badge.ready {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.processing {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .config-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .info-note {
+            background: #e8f5e9;
+            border: 1px solid #a5d6a7;
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-size: 0.9em;
+            color: #2e7d32;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .config-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .result-area {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+
+        .result-area h4 {
+            margin-bottom: 12px;
+            color: #444;
+        }
+
+        .result-text {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-size: 0.9em;
+            line-height: 1.8;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #fff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #888;
+        }
+
+        .empty-state .icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: #fff;
+            cursor: pointer;
+            color: #555;
+        }
+
+        .file-input-label:hover {
+            border-color: #1a73e8;
+        }
+
+        .threshold-slider {
+            margin-top: 10px;
+        }
+
+        .threshold-value {
+            font-weight: 600;
+            color: #1a73e8;
+        }
+
+        audio {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-group input {
+            width: 18px;
+            height: 18px;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .loading-box {
+            background: #fff;
+            padding: 30px 50px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .loading-box .spinner {
+            width: 40px;
+            height: 40px;
+            border-width: 4px;
+            border-color: #1a73e8;
+            border-top-color: transparent;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><span class="icon">🎤</span>Hệ thống nhận diện giọng nói</h1>
+        </header>
+
+        <div class="main-content">
+            <!-- Left Panel: Speaker References -->
+            <div class="panel">
+                <div class="panel-header blue">
+                    <span>👥</span> Speaker References
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="speakerName">Speaker Name</label>
+                        <input type="text" id="speakerName" class="form-control" placeholder="e.g. Phong, An ...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="speakerAudio">Audio File</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="speakerAudio" accept=".wav,.mp3,.m4a,.flac,.ogg,.opus">
+                            <div class="file-input-label" id="speakerAudioLabel">Choose File - No file chosen</div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" id="uploadSpeakerBtn">
+                        <span>⬆️</span> Upload Speaker
+                    </button>
+
+                    <div class="speaker-list">
+                        <div class="speaker-list-title">Registered Speakers</div>
+                        <div id="speakersList">
+                            <div class="empty-state">
+                                <div class="icon">🎙️</div>
+                                <p>Chưa có speaker nào được đăng ký</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Process Audio -->
+            <div class="panel">
+                <div class="panel-header green">
+                    <span>🔊</span> Process Audio
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="audioFile">Audio File</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="audioFile" accept=".wav,.mp3,.m4a,.flac,.ogg,.opus">
+                            <div class="file-input-label" id="audioFileLabel">Choose File - No file chosen</div>
+                        </div>
+                    </div>
+
+                    <div class="info-note">
+                        ⏱ Thời lượng: <strong>&lt;45 phút</strong> &nbsp;|&nbsp; 👥 Hoạt động tốt nhất: <strong>&lt;5 người</strong>
+                    </div>
+
+                    <div class="config-row">
+                        <div class="form-group">
+                            <label for="language">Language</label>
+                            <select id="language" class="form-control">
+                                <option value="vi" selected>Vietnamese</option>
+                                <option value="">Auto-detect</option>
+                                <option value="en">English</option>
+                                <option value="zh">Chinese</option>
+                                <option value="ja">Japanese</option>
+                                <option value="ko">Korean</option>
+                                <option value="fr">French</option>
+                                <option value="de">German</option>
+                                <option value="es">Spanish</option>
+                                <option value="ru">Russian</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-success" id="processBtn">
+                        <span>⚙️</span> Start Processing
+                    </button>
+
+                    <div class="result-area" id="resultArea" style="display: none;">
+                        <h4>📝 Kết quả:</h4>
+                        <div class="result-text" id="resultText"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-box">
+            <div class="spinner"></div>
+            <p>Đang xử lý...</p>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5001/api';
+        let uploadedAudioPath = null;
+
+        // DOM Elements
+        const speakerNameInput = document.getElementById('speakerName');
+        const speakerAudioInput = document.getElementById('speakerAudio');
+        const speakerAudioLabel = document.getElementById('speakerAudioLabel');
+        const uploadSpeakerBtn = document.getElementById('uploadSpeakerBtn');
+        const speakersList = document.getElementById('speakersList');
+        
+        const audioFileInput = document.getElementById('audioFile');
+        const audioFileLabel = document.getElementById('audioFileLabel');
+        const languageSelect = document.getElementById('language');
+        const processBtn = document.getElementById('processBtn');
+        const resultArea = document.getElementById('resultArea');
+        const resultText = document.getElementById('resultText');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        // File input handlers
+        speakerAudioInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                speakerAudioLabel.textContent = file.name;
+            }
+        });
+
+        audioFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                audioFileLabel.textContent = file.name;
+            }
+        });
+
+        // Load speakers on page load
+        loadSpeakers();
+
+        // Upload speaker
+        uploadSpeakerBtn.addEventListener('click', async () => {
+            const name = speakerNameInput.value.trim();
+            const file = speakerAudioInput.files[0];
+
+            if (!name) {
+                showAlert('Vui lòng nhập tên speaker!', 'error');
+                return;
+            }
+
+            if (!file) {
+                showAlert('Vui lòng chọn file audio!', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('audio', file);
+
+            uploadSpeakerBtn.disabled = true;
+            uploadSpeakerBtn.innerHTML = '<span class="spinner"></span> Đang tải lên...';
+
+            try {
+                const response = await fetch(`${API_BASE}/speakers`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert(`Đã thêm speaker "${data.name}" thành công!`, 'success');
+                    speakerNameInput.value = '';
+                    speakerAudioInput.value = '';
+                    speakerAudioLabel.textContent = 'Choose File - No file chosen';
+                    loadSpeakers();
+                } else {
+                    showAlert(data.error || 'Lỗi khi upload speaker!', 'error');
+                }
+            } catch (error) {
+                showAlert('Lỗi kết nối đến server!', 'error');
+            } finally {
+                uploadSpeakerBtn.disabled = false;
+                uploadSpeakerBtn.innerHTML = '<span>⬆️</span> Upload Speaker';
+            }
+        });
+
+        // Load speakers list
+        async function loadSpeakers() {
+            try {
+                const response = await fetch(`${API_BASE}/speakers`);
+                const data = await response.json();
+
+                if (data.speakers.length === 0) {
+                    speakersList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">🎙️</div>
+                            <p>Chưa có speaker nào được đăng ký</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                speakersList.innerHTML = data.speakers.map(speaker => `
+                    <div class="speaker-item" data-id="${speaker.id}">
+                        <div class="speaker-info">
+                            <svg class="speaker-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                            <div>
+                                <span class="speaker-name">${speaker.name}</span>
+                                <span class="speaker-size">(${speaker.size_kb} KB)</span>
+                            </div>
+                        </div>
+                        <div class="speaker-actions">
+                            <span class="status-badge ready">✓ Ready</span>
+                            <button class="btn btn-danger" onclick="deleteSpeaker('${speaker.id}')">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading speakers:', error);
+            }
+        }
+
+        // Delete speaker
+        window.deleteSpeaker = async function(speakerId) {
+            if (!confirm('Bạn có chắc muốn xóa speaker này?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/speakers/${speakerId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    showAlert('Đã xóa speaker!', 'success');
+                    loadSpeakers();
+                } else {
+                    showAlert('Lỗi khi xóa speaker!', 'error');
+                }
+            } catch (error) {
+                showAlert('Lỗi kết nối đến server!', 'error');
+            }
+        };
+
+        // Process audio
+        processBtn.addEventListener('click', async () => {
+            if (!uploadedAudioPath) {
+                showAlert('Vui lòng upload audio file trước!', 'error');
+                return;
+            }
+
+            processBtn.disabled = true;
+            processBtn.innerHTML = '<span class="spinner"></span> Đang xử lý...';
+            loadingOverlay.style.display = 'flex';
+            resultArea.style.display = 'none';
+
+            const data = {
+                audio_filepath: uploadedAudioPath,
+                whisper_model: 'large-v3',
+                language: languageSelect.value || null,
+                diarizer: 'sortformer',
+                threshold: 0.45,
+                batch_size: 64
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/process`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    resultText.textContent = result.transcript || 'Không có kết quả';
+                    resultArea.style.display = 'block';
+                    showAlert('Xử lý hoàn tất!', 'success');
+                } else {
+                    showAlert(result.error || 'Lỗi khi xử lý audio!', 'error');
+                }
+            } catch (error) {
+                showAlert('Lỗi kết nối đến server!', 'error');
+            } finally {
+                processBtn.disabled = false;
+                processBtn.innerHTML = '<span>⚙️</span> Start Processing';
+                loadingOverlay.style.display = 'none';
+            }
+        });
+
+        // Upload audio for processing
+        audioFileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('audio', file);
+
+            processBtn.disabled = true;
+            processBtn.innerHTML = '<span class="spinner"></span> Đang tải lên...';
+
+            try {
+                const response = await fetch(`${API_BASE}/audio/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    uploadedAudioPath = data.filepath;
+                    showAlert(`Đã upload file "${file.name}"!`, 'success');
+                } else {
+                    showAlert(data.error || 'Lỗi khi upload!', 'error');
+                }
+            } catch (error) {
+                showAlert('Lỗi kết nối đến server!', 'error');
+            } finally {
+                processBtn.disabled = false;
+                processBtn.innerHTML = '<span>⚙️</span> Start Processing';
+            }
+        });
+
+        // Show alert
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            document.querySelector('.container').insertBefore(alert, document.querySelector('.main-content'));
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

@@ -7,7 +7,7 @@ import re
 import faster_whisper
 import torch
 
-from ctc_forced_aligner import (
+from alignment_compat import (
     generate_emissions,
     get_alignments,
     get_spans,
@@ -187,7 +187,7 @@ if __name__ == "__main__":
 
     emissions, stride = generate_emissions(
         alignment_model,
-        torch.from_numpy(audio_waveform).to(alignment_model.dtype).to(alignment_model.device),
+        audio_waveform,
         batch_size=args.batch_size,
     )
 

@@ -24,7 +24,7 @@ from nemo.collections.asr.models import EncDecSpeakerLabelModel
 logger = logging.getLogger("speaker-identification")
 
 EMBEDDING_MODEL = "titanet_large"
-DEFAULT_THRESHOLD = 0.20
+DEFAULT_THRESHOLD = 0.45
 MIN_SEGMENT_SECONDS = 1.0
 MAX_SEGMENTS_PER_SPEAKER = 8
 CACHE_FILENAME = ".speaker_embeddings_cache.npz"

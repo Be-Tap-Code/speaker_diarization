@@ -6,7 +6,7 @@ omegaconf>=2.3.0,<3.0.0
 faster-whisper>=1.0.0,<2.0.0
 
 # Forced alignment
-ctc-forced-aligner>=0.3.0,<1.0.0
+ctc-forced-aligner>=1.0.2,<2.0.0
 
 # Punctuation restoration
 deepmultilingualpunctuation>=1.0.0,<2.0.0

@@ -23,7 +23,20 @@
       "Bash(git config *)",
       "Bash(git add *)",
       "Bash(git commit *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(chmod *)",
+      "Bash(./start_server.sh)",
+      "Bash(true)",
+      "Bash(cd *)",
+      "Bash(head *)",
+      "Bash(fuser *)",
+      "Bash(cat *)",
+      "Bash(echo *)",
+      "Bash(ss *)",
+      "Bash(tail *)",
+      "Bash(du *)",
+      "Bash(hostname)",
+      "Bash(ls *)"
     ]
   },
   "$version": 3
