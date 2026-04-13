@@ -49,6 +49,9 @@
             .main-content {
                 grid-template-columns: 1fr;
             }
+            .panel {
+                min-height: auto;
+            }
         }
 
         .panel {
@@ -56,6 +59,9 @@
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: min(70vh, 700px);
         }
 
         .panel-header {
@@ -79,6 +85,10 @@
 
         .panel-body {
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1 1 auto;
         }
 
         .form-group {
@@ -160,9 +170,30 @@
             background: #c82333;
         }
 
+        .btn-audio {
+            background: #17a2b8;
+            color: #fff;
+            padding: 6px 10px;
+        }
+
+        .btn-audio:hover {
+            background: #138496;
+        }
+
+        .btn-sample {
+            background: #ff9800;
+            color: #fff;
+            padding: 8px 16px;
+            font-size: 0.9em;
+        }
+
+        .btn-sample:hover {
+            background: #f57c00;
+        }
+
         .speaker-list {
             margin-top: 20px;
-            max-height: 400px;
+            max-height: min(60vh, 600px);
             overflow-y: auto;
         }
 
@@ -266,11 +297,24 @@
             background: #f8f9fa;
             padding: 15px;
             border-radius: 8px;
-            max-height: 300px;
+            max-height: min(70vh, 600px);
             overflow-y: auto;
             white-space: pre-wrap;
             font-size: 0.9em;
             line-height: 1.8;
+        }
+        .result-text p {
+            margin: 0 0 12px 0;
+        }
+
+        .result-text .speaker-label {
+            background: linear-gradient(90deg, rgba(234,243,255,1) 0%, rgba(221,241,235,1) 100%);
+            color: #0b3d2e;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 700;
+            margin-right: 8px;
+            display: inline-block;
         }
 
         .spinner {
@@ -463,6 +507,35 @@
                         </div>
                     </div>
 
+                    <div id="audioPlayerContainer" style="display: none; margin-bottom: 15px;">
+                        <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; margin-bottom: 10px;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                                <span style="font-weight: 500; font-size: 0.9em;">🎵 Uploaded Audio:</span>
+                                <span id="audioFileName" style="color: #1a73e8; font-size: 0.9em;"></span>
+                            </div>
+                            <audio id="uploadedAudioPlayer" controls style="width: 100%;">
+                                Your browser does not support the audio element.
+                            </audio>
+                        </div>
+                    </div>
+
+                    <div id="audioSamplesContainer" style="margin-bottom: 15px;">
+                        <div style="background: #fff3e0; border: 1px solid #ffcc80; border-radius: 6px; padding: 12px;">
+                            <div style="font-weight: 600; margin-bottom: 10px; color: #e65100; font-size: 0.95em;">
+                                🎧 Audio Samples - Nghe thử & chọn để xử lý
+                            </div>
+                            <p style="font-size: 0.85em; color: #666; margin-bottom: 12px;">
+                                Chọn một trong các mẫu audio dưới đây để chạy thử mô hình. Bạn có thể nghe thử trước khi chọn xử lý.
+                            </p>
+                            <div id="samplesList">
+                                <div style="text-align: center; padding: 20px; color: #888;">
+                                    <span class="spinner" style="border-color: #ff9800; border-top-color: transparent;"></span>
+                                    Đang tải samples...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="info-note">
                         ⏱ Thời lượng: <strong>&lt;45 phút</strong> &nbsp;|&nbsp; 👥 Hoạt động tốt nhất: <strong>&lt;5 người</strong>
                     </div>
@@ -622,6 +695,9 @@
                             <button class="btn btn-danger" onclick="deleteSpeaker('${speaker.id}')">
                                 🗑️
                             </button>
+                            <button class="btn btn-audio" onclick="playSpeakerAudio('${speaker.id}', '${speaker.filename}')" title="Listen to speaker audio">
+                                🔊
+                            </button>
                         </div>
                     </div>
                 `).join('');
@@ -651,6 +727,28 @@
             } catch (error) {
                 showAlert('Lỗi kết nối đến server!', 'error');
             }
+        };
+
+        // Play speaker audio
+        window.playSpeakerAudio = async function(speakerId, filename) {
+            const audioUrl = `${API_BASE}/speakers/${speakerId}/audio`;
+            
+            // Create a temporary audio player
+            const audioContainer = document.createElement('div');
+            audioContainer.className = 'alert alert-info';
+            audioContainer.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="font-weight: 500;">🎵 Speaker Audio: ${speakerId}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; cursor: pointer; font-size: 1.2em;">✖</button>
+                </div>
+                <audio controls autoplay style="width: 100%;">
+                    <source src="${audioUrl}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            `;
+            
+            // Insert after the speakers list
+            document.querySelector('.speaker-list').appendChild(audioContainer);
         };
 
         // Process audio
@@ -684,7 +782,7 @@
                 const result = await response.json();
 
                 if (response.ok && result.success) {
-                    resultText.textContent = result.transcript || 'Không có kết quả';
+                    resultText.innerHTML = formatTranscript(result.transcript);
                     resultArea.style.display = 'block';
                     showAlert('Xử lý hoàn tất!', 'success');
                 } else {
@@ -721,6 +819,9 @@
                 if (response.ok) {
                     uploadedAudioPath = data.filepath;
                     showAlert(`Đã upload file "${file.name}"!`, 'success');
+                    
+                    // Show audio player
+                    showAudioPlayer(file.name, data.id);
                 } else {
                     showAlert(data.error || 'Lỗi khi upload!', 'error');
                 }
@@ -732,6 +833,132 @@
             }
         });
 
+        // Show audio player for uploaded file
+        function showAudioPlayer(filename, audioId) {
+            const container = document.getElementById('audioPlayerContainer');
+            const playerName = document.getElementById('audioFileName');
+            const player = document.getElementById('uploadedAudioPlayer');
+
+            playerName.textContent = filename;
+            player.src = `${API_BASE}/audio/${audioId}/stream`;
+            container.style.display = 'block';
+        }
+
+        // Use sample audio file
+        window.useSampleAudio = async function(filename, sampleId) {
+            // Map sample ID to actual file path with extension
+            const sampleFiles = {
+                'phong_van': 'phỏng vấn.mp3',
+                'tro_chuyen': 'trò chuyện.wav'
+            };
+
+            const actualFilename = sampleFiles[sampleId];
+
+            if (!actualFilename) {
+                showAlert('Sample không tồn tại!', 'error');
+                return;
+            }
+
+            // Show loading
+            processBtn.disabled = true;
+            processBtn.innerHTML = '<span class="spinner"></span> Đang chuẩn bị sample...';
+
+            try {
+                // Call backend to prepare sample (copy to uploads dir)
+                const response = await fetch(`${API_BASE}/samples/${sampleId}/prepare`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Lỗi khi chuẩn bị sample');
+                }
+
+                // Use the prepared file path from backend
+                uploadedAudioPath = data.filepath;
+
+                // Show the audio player with sample
+                const container = document.getElementById('audioPlayerContainer');
+                const playerName = document.getElementById('audioFileName');
+                const player = document.getElementById('uploadedAudioPlayer');
+
+                playerName.textContent = `${filename} (Sample)`;
+                player.src = `${API_BASE}/audio/${data.id}/stream`;
+                container.style.display = 'block';
+
+                showAlert(`Đã chọn sample "${filename}"! Nhấn "Start Processing" để xử lý.`, 'success');
+
+                // Scroll to process button
+                processBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } catch (error) {
+                console.error('Sample preparation error:', error);
+                showAlert(`Lỗi khi chọn sample: ${error.message}`, 'error');
+            } finally {
+                processBtn.disabled = false;
+                processBtn.innerHTML = '<span>⚙️</span> Start Processing';
+            }
+        };
+
+        // Initialize sample audio players on page load
+        async function initSampleAudio() {
+            try {
+                // Fetch samples from API
+                const response = await fetch(`${API_BASE}/samples`);
+                const data = await response.json();
+                
+                const samplesList = document.getElementById('samplesList');
+                
+                if (data.samples && data.samples.length > 0) {
+                    // Render samples dynamically
+                    samplesList.innerHTML = data.samples.map((sample, index) => `
+                        <div style="background: #f5f5f5; border-radius: 6px; padding: 10px; ${index > 0 ? 'margin-top: 10px;' : 'margin-bottom: 10px;'}">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                                <div>
+                                    <span style="font-weight: 600; color: #333;">${index === 0 ? '📹' : '💬'} ${sample.display_name}</span>
+                                    <span style="font-size: 0.8em; color: #888; margin-left: 8px;">(${sample.speakers.length} speakers)</span>
+                                </div>
+                            </div>
+                            <p style="font-size: 0.8em; color: #666; margin: 0 0 8px 0;">
+                                ${sample.description}
+                            </p>
+                            <audio id="samplePlayer_${sample.id}" controls style="width: 100%; margin-bottom: 8px;" data-sample-id="${sample.id}">
+                                Your browser does not support the audio element.
+                            </audio>
+                            <button class="btn btn-sample" onclick="useSampleAudio('${sample.display_name}', '${sample.id}')" style="width: 100%;">
+                                ⚡ Chọn mẫu này để xử lý
+                            </button>
+                        </div>
+                    `).join('');
+                    
+                    // Set audio sources for each sample
+                    data.samples.forEach(sample => {
+                        const player = document.getElementById(`samplePlayer_${sample.id}`);
+                        if (player) {
+                            player.src = `${API_BASE}/samples/${sample.id}/stream`;
+                        }
+                    });
+                } else {
+                    samplesList.innerHTML = `
+                        <div style="text-align: center; padding: 20px; color: #888;">
+                            <div class="icon" style="font-size: 2em; margin-bottom: 10px;">🎵</div>
+                            <p>Không có sample nào</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error initializing sample audio:', error);
+                document.getElementById('samplesList').innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: #dc3545;">
+                        <p>Lỗi khi tải samples: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Call on page load
+        initSampleAudio();
+
         // Show alert
         function showAlert(message, type) {
             const alert = document.createElement('div');
@@ -742,6 +969,31 @@
             setTimeout(() => {
                 alert.remove();
             }, 3000);
+        }
+
+        // Escape HTML to avoid injection
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>"']/g, function (m) {
+                return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"})[m];
+            });
+        }
+
+        // Convert plain transcript into HTML with highlighted speaker labels
+        function formatTranscript(text) {
+            if (!text) return 'Không có kết quả';
+            const escaped = escapeHtml(text);
+            const lines = escaped.split(/\r?\n/);
+            return lines.map(line => {
+                if (!line.trim()) return '<p></p>';
+                const m = line.match(/^(\s*)([^:]{1,80}):\s*(.*)$/);
+                if (m) {
+                    const name = m[2];
+                    const rest = m[3];
+                    return `<p><span class="speaker-label">${name}:</span> ${rest}</p>`;
+                }
+                return `<p>${line}</p>`;
+            }).join('');
         }
     </script>
 </body>

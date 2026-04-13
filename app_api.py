@@ -39,11 +39,12 @@ SPEAKER_REFS_DIR = DATA_DIR / "speaker_references"
 UPLOADS_DIR = DATA_DIR / "uploads"
 PROCESSED_DIR = DATA_DIR / "processed"
 STATIC_DIR = BASE_DIR / "static"
+UPLOAD_SAMPLES_DIR = DATA_DIR / "upload_samples"
 
 ALLOWED_AUDIO_EXTENSIONS = {".wav", ".mp3", ".m4a", ".flac", ".ogg", ".opus"}
 
 # Ensure directories exist
-for d in [SPEAKER_REFS_DIR, UPLOADS_DIR, PROCESSED_DIR, STATIC_DIR]:
+for d in [SPEAKER_REFS_DIR, UPLOADS_DIR, PROCESSED_DIR, STATIC_DIR, UPLOAD_SAMPLES_DIR]:
     d.mkdir(parents=True, exist_ok=True)
 
 # Mount static files
@@ -198,6 +199,98 @@ async def stream_audio(audio_id: str):
             if audio_id in audio_file.stem:
                 return FileResponse(str(audio_file), media_type="audio/mpeg")
     raise HTTPException(status_code=404, detail="Audio not found")
+
+
+@app.get("/api/samples/{sample_id}/stream")
+async def stream_sample_audio(sample_id: str):
+    """Stream sample audio file."""
+    # Map sample ID to actual file
+    sample_files = {
+        'phong_van': 'phỏng vấn.mp3',
+        'tro_chuyen': 'trò chuyện.wav'
+    }
+    
+    filename = sample_files.get(sample_id)
+    if not filename:
+        raise HTTPException(status_code=404, detail="Sample not found")
+    
+    filepath = UPLOAD_SAMPLES_DIR / filename
+    if not filepath.exists():
+        raise HTTPException(status_code=404, detail="Sample file not found")
+    
+    media_type = "audio/mpeg" if filepath.suffix.lower() == '.mp3' else "audio/wav"
+    return FileResponse(str(filepath), media_type=media_type)
+
+
+@app.post("/api/samples/{sample_id}/prepare")
+async def prepare_sample(sample_id: str):
+    """Copy sample file to uploads directory and return filepath for processing."""
+    # Map sample ID to actual filename
+    sample_mapping = {
+        'phong_van': 'phỏng vấn.mp3',
+        'tro_chuyen': 'trò chuyện.wav',
+    }
+    
+    filename = sample_mapping.get(sample_id)
+    if not filename:
+        raise HTTPException(status_code=404, detail="Sample not found")
+    
+    source_path = UPLOAD_SAMPLES_DIR / filename
+    if not source_path.exists():
+        raise HTTPException(status_code=404, detail="Sample file not found")
+    
+    # Copy to uploads directory with unique name
+    unique_filename = f"sample_{sample_id}_{uuid.uuid4().hex[:8]}{source_path.suffix}"
+    dest_path = UPLOADS_DIR / unique_filename
+    shutil.copy(str(source_path), str(dest_path))
+    
+    logger.info(f"Prepared sample: {dest_path.name}")
+    
+    return {
+        "id": dest_path.stem,
+        "filename": dest_path.name,
+        "filepath": str(dest_path),
+        "size_kb": round(dest_path.stat().st_size / 1024, 1),
+    }
+
+
+@app.get("/api/samples")
+async def list_samples():
+    """List available sample audio files."""
+    # Map actual filenames to URL-safe IDs
+    sample_mapping = {
+        'phong_van': {
+            'filename': 'phỏng vấn.mp3',
+            'display_name': 'Phỏng vấn',
+            'description': 'Cuộc phỏng vấn với 3 nhân vật: Cường Nguyễn, Nhân sự 1 và Nhân sự 2',
+            'speakers': ['Cường Nguyễn', 'Nhân sự 1', 'Nhân sự 2'],
+        },
+        'tro_chuyen': {
+            'filename': 'trò chuyện.wav',
+            'display_name': 'Trò chuyện',
+            'description': 'Cuộc trò chuyện giữa anh Khánh, chị Hoàng Anh và anh Toàn',
+            'speakers': ['anh Khánh', 'chị Hoàng Anh', 'anh Toàn'],
+        },
+    }
+    
+    samples = []
+    if UPLOAD_SAMPLES_DIR.exists():
+        for sample_id, info in sample_mapping.items():
+            filepath = UPLOAD_SAMPLES_DIR / info['filename']
+            if filepath.exists():
+                stat = filepath.stat()
+                size_kb = stat.st_size / 1024
+                size_mb = size_kb / 1024
+                samples.append({
+                    "id": sample_id,
+                    "display_name": info['display_name'],
+                    "filename": info['filename'],
+                    "description": info['description'],
+                    "speakers": info['speakers'],
+                    "size_kb": round(size_kb, 1),
+                    "size_mb": round(size_mb, 2),
+                })
+    return {"samples": samples}
 
 
 @app.post("/api/process")
