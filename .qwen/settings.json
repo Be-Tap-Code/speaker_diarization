@@ -36,7 +36,10 @@
       "Bash(tail *)",
       "Bash(du *)",
       "Bash(hostname)",
-      "Bash(ls *)"
+      "Bash(ls *)",
+      "Bash(cp *)",
+      "Bash(kill *)",
+      "Bash(bash *)"
     ]
   },
   "$version": 3
