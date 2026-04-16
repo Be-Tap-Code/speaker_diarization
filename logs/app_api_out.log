@@ -1,0 +1,12 @@
+INFO:     14.161.46.192:54354 - "GET / HTTP/1.1" 200 OK
+INFO:     14.161.46.192:54354 - "GET /api/speakers HTTP/1.1" 200 OK
+INFO:     14.161.46.192:54368 - "GET /api/samples HTTP/1.1" 200 OK
+INFO:     14.161.46.192:54354 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     14.161.46.192:54368 - "GET /api/samples/phong_van/stream HTTP/1.1" 206 Partial Content
+INFO:     14.161.46.192:54372 - "GET /api/samples/tro_chuyen/stream HTTP/1.1" 206 Partial Content
+INFO:     14.161.46.192:52237 - "GET / HTTP/1.1" 200 OK
+INFO:     14.161.46.192:52237 - "GET /api/speakers HTTP/1.1" 200 OK
+INFO:     14.161.46.192:56753 - "GET /api/samples HTTP/1.1" 200 OK
+INFO:     14.161.46.192:56753 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     14.161.46.192:52237 - "GET /api/samples/phong_van/stream HTTP/1.1" 206 Partial Content
+INFO:     14.161.46.192:56753 - "GET /api/samples/tro_chuyen/stream HTTP/1.1" 206 Partial Content

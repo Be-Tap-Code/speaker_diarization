@@ -986,7 +986,6 @@
             const lines = escaped.split(/\r?\n/);
             return lines.map(line => {
                 if (!line.trim()) return '<p></p>';
-                // Match patterns like "Name:" at the start of a line
                 const m = line.match(/^(\s*)([^:]{1,80}):\s*(.*)$/);
                 if (m) {
                     const name = m[2];

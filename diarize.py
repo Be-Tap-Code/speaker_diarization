@@ -252,6 +252,13 @@ def _apply_speaker_identification(
 
 
 def run(args: argparse.Namespace) -> None:
+    # Limit GPU memory to 10GB (A100 has 80GB, 10/80 ≈ 0.125)
+    if args.device == "cuda":
+        total_mem = torch.cuda.get_device_properties(0).total_memory
+        limit_fraction = (10 * 1024**3) / total_mem  # 10GB / total memory
+        torch.cuda.set_per_process_memory_fraction(limit_fraction)
+        logging.info(f"GPU memory limited to 10GB ({limit_fraction:.2%} of total)")
+
     language = process_language_arg(args.language, args.model_name)
     temp_path = os.path.join(os.getcwd(), f"temp_outputs_{os.getpid()}")
     os.makedirs(temp_path, exist_ok=True)

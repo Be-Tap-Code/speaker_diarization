@@ -1,0 +1,105 @@
+INFO:     14.161.46.192:62903 - "GET / HTTP/1.1" 200 OK
+INFO:     14.161.46.192:62903 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     14.161.46.192:62903 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     14.161.46.192:62903 - "GET / HTTP/1.1" 200 OK
+INFO:     14.161.46.192:62903 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     14.161.46.192:57196 - "GET / HTTP/1.1" 200 OK
+INFO:     14.161.46.192:57196 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     14.161.46.192:57196 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:48040 - "GET / HTTP/1.1" 200 OK
+INFO:     171.244.137.76:48044 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     171.244.137.76:48046 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:60966 - "GET / HTTP/1.1" 200 OK
+INFO:     171.244.137.76:60978 - "GET /output.txt HTTP/1.1" 404 Not Found
+INFO:     14.161.46.192:47862 - "GET / HTTP/1.1" 200 OK
+INFO:     14.161.46.192:47862 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     14.161.46.192:47862 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:57950 - "GET / HTTP/1.1" 200 OK
+INFO:     171.244.137.76:57956 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     171.244.137.76:57972 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:36140 - "GET / HTTP/1.1" 200 OK
+INFO:     171.244.137.76:36144 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     171.244.137.76:36152 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:41796 - "GET / HTTP/1.1" 200 OK
+INFO:     171.244.137.76:52892 - "GET /.aws/credentials HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:52908 - "GET /.env HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:52924 - "GET /aws.env HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:52940 - "GET /.env.production HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:59616 - "GET /.git/config HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:55856 - "GET / HTTP/1.1" 200 OK
+INFO:     171.244.137.76:34532 - "GET / HTTP/1.1" 200 OK
+INFO:     171.244.137.76:38518 - "GET //wp-includes/ID3/license.txt HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:38528 - "GET //feed/ HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:38530 - "GET //xmlrpc.php?rsd HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:38546 - "GET //blog/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:38558 - "GET //web/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:38574 - "GET //wordpress/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:38584 - "GET //wp/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:38586 - "GET //2020/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:38596 - "GET //2019/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:38608 - "GET //2021/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:38614 - "GET //shop/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:38622 - "GET //wp1/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:38634 - "GET //test/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:38642 - "GET //site/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:38648 - "GET //cms/wp-includes/wlwmanifest.xml HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:37246 - "GET / HTTP/1.1" 200 OK
+INFO:     171.244.137.76:42510 - "GET / HTTP/1.1" 200 OK
+INFO:     171.244.137.76:39208 - "GET / HTTP/1.1" 200 OK
+INFO:     171.244.137.76:39222 - "GET /.env HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:39230 - "GET /.env.bak HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:39244 - "GET /.env.save HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:39260 - "GET /.env.local HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:39264 - "GET /backend/.env HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:39280 - "GET /admin/.env HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:39292 - "GET /.git/config HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:39306 - "GET /wp-config.php HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:39308 - "GET /wp-config.php.old HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:39324 - "GET /config.php HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:39332 - "GET /config.php.bak HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:39336 - "GET /config.js HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:39350 - "GET /aws-config.js HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:39356 - "GET /aws.config.js HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:39370 - "GET /phpinfo.php HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:52162 - "GET /.git/HEAD HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:52164 - "GET /.git/config HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:59170 - "GET / HTTP/1.1" 200 OK
+INFO:     171.244.137.76:59180 - "GET /.env HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:59192 - "GET /.env.bak HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:59206 - "GET /.env.save HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:59222 - "GET /.env.local HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:59226 - "GET /backend/.env HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:59228 - "GET /admin/.env HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:59232 - "GET /.git/config HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:59234 - "GET /wp-config.php HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:59250 - "GET /wp-config.php.old HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:59256 - "GET /config.php HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:59270 - "GET /config.php.bak HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:59284 - "GET /config.js HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:59286 - "GET /aws-config.js HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:59292 - "GET /aws.config.js HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:59302 - "GET /phpinfo.php HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:59318 - "GET /.git/HEAD HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:59324 - "GET /.git/config HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:54998 - "GET / HTTP/1.1" 200 OK
+INFO:     171.244.137.76:55008 - "GET / HTTP/1.1" 200 OK
+INFO:     171.244.137.76:55010 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:55014 - "GET / HTTP/1.1" 200 OK
+INFO:     171.244.137.76:48592 - "GET / HTTP/1.1" 200 OK
+INFO:     171.244.137.76:48602 - "GET / HTTP/1.1" 200 OK
+INFO:     171.244.137.76:48612 - "GET / HTTP/1.1" 200 OK
+INFO:     171.244.137.76:48626 - "GET / HTTP/1.1" 200 OK
+INFO:     171.244.137.76:59976 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:59978 - "GET / HTTP/1.1" 200 OK
+INFO:     171.244.137.76:59990 - "GET / HTTP/1.1" 200 OK
+INFO:     171.244.137.76:59998 - "GET / HTTP/1.1" 200 OK
+INFO:     14.161.46.192:52046 - "GET / HTTP/1.1" 200 OK
+INFO:     14.161.46.192:52046 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     14.161.46.192:52046 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     14.161.46.192:51232 - "POST /api/upload HTTP/1.1" 500 Internal Server Error
+INFO:     171.244.137.76:59040 - "GET / HTTP/1.1" 200 OK
+INFO:     171.244.137.76:59050 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     171.244.137.76:59066 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     14.161.46.192:63186 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     14.161.46.192:63186 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     171.244.137.76:35774 - "GET /wp-login.php HTTP/1.1" 404 Not Found

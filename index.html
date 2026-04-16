@@ -268,6 +268,48 @@
             color: #9333ea;
         }
 
+        .preview-content .speaker-label {
+            font-weight: 700;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        .preview-content .speaker-text {
+            color: #111827;
+        }
+
+        .preview-content .speaker-color-0 {
+            color: #2563eb;
+        }
+
+        .preview-content .speaker-color-1 {
+            color: #16a34a;
+        }
+
+        .preview-content .speaker-color-2 {
+            color: #dc2626;
+        }
+
+        .preview-content .speaker-color-3 {
+            color: #9333ea;
+        }
+
+        .preview-content .speaker-color-4 {
+            color: #ea580c;
+        }
+
+        .preview-content .speaker-color-5 {
+            color: #0891b2;
+        }
+
+        .preview-content .speaker-color-6 {
+            color: #c026d3;
+        }
+
+        .preview-content .speaker-color-7 {
+            color: #65a30d;
+        }
+
         .hidden {
             display: none;
         }
@@ -393,6 +435,7 @@
     <script>
         let currentTaskId = null;
         let statusCheckInterval = null;
+        const GENERIC_ERROR_MESSAGE = 'Có lỗi xảy ra. Vui lòng thử lại sau.';
 
         // File input change handler
         document.getElementById('fileInput').addEventListener('change', function(e) {
@@ -449,7 +492,7 @@
 
                 if (!response.ok) {
                     const error = await response.json();
-                    throw new Error(error.detail || 'Upload failed');
+                    throw new Error(error.detail || GENERIC_ERROR_MESSAGE);
                 }
 
                 const data = await response.json();
@@ -462,7 +505,7 @@
                 startStatusPolling();
 
             } catch (error) {
-                showError(error.message);
+                showError(GENERIC_ERROR_MESSAGE);
                 resetForm();
             }
         });
@@ -509,7 +552,7 @@
                         resetForm();
                     } else if (data.status === 'error') {
                         clearInterval(statusCheckInterval);
-                        showError(data.error || 'Processing failed');
+                        showError(data.error || GENERIC_ERROR_MESSAGE);
                         resetForm();
                     } else {
                         // Still processing
@@ -518,6 +561,9 @@
 
                 } catch (error) {
                     console.error('Status polling error:', error);
+                    clearInterval(statusCheckInterval);
+                    showError(GENERIC_ERROR_MESSAGE);
+                    resetForm();
                 }
             }, 2000);
         }
@@ -541,10 +587,49 @@
 
         function showPreview(text) {
             const previewContent = document.getElementById('previewContent');
-            // Color-code speakers
-            const coloredText = text.replace(/\[Speaker:(\d+)\]/g, '<span class="speaker-$1">[Speaker:$1]</span>');
-            previewContent.innerHTML = coloredText;
+            const speakerColorMap = new Map();
+            let nextColorIndex = 0;
+            const colorClassCount = 8;
+
+            function getSpeakerColorClass(speakerName) {
+                if (!speakerColorMap.has(speakerName)) {
+                    speakerColorMap.set(speakerName, `speaker-color-${nextColorIndex % colorClassCount}`);
+                    nextColorIndex += 1;
+                }
+                return speakerColorMap.get(speakerName);
+            }
+
+            const coloredLines = text.split('\n').map((line) => {
+                const numberedMatch = line.match(/^\[Speaker:(.+?)\]\s*(.*)$/);
+                if (numberedMatch) {
+                    const speakerLabel = `[Speaker:${numberedMatch[1]}]`;
+                    const speakerText = numberedMatch[2] || '';
+                    const colorClass = getSpeakerColorClass(speakerLabel);
+                    return `<span class="speaker-label ${colorClass}">${escapeHtml(speakerLabel)}</span><span class="speaker-text">${escapeHtml(speakerText)}</span>`;
+                }
+
+                const namedMatch = line.match(/^([^:\n]+):\s*(.*)$/);
+                if (namedMatch) {
+                    const speakerLabel = `${namedMatch[1]}:`;
+                    const speakerText = namedMatch[2] || '';
+                    const colorClass = getSpeakerColorClass(namedMatch[1].trim());
+                    return `<span class="speaker-label ${colorClass}">${escapeHtml(speakerLabel)}</span><span class="speaker-text">${escapeHtml(speakerText)}</span>`;
+                }
+
+                return `<span class="speaker-text">${escapeHtml(line)}</span>`;
+            });
+
+            previewContent.innerHTML = coloredLines.join('\n');
             document.getElementById('previewSection').classList.remove('hidden');
+        }
+
+        function escapeHtml(value) {
+            return value
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
         }
 
         function showError(message) {

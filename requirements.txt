@@ -7,6 +7,7 @@ faster-whisper>=1.0.0,<2.0.0
 
 # Forced alignment
 ctc-forced-aligner>=1.0.2,<2.0.0
+unidecode>=1.3.0,<2.0.0
 
 # Punctuation restoration
 deepmultilingualpunctuation>=1.0.0,<2.0.0
@@ -21,12 +22,14 @@ demucs>=4.0.0,<5.0.0
 soundfile>=0.12.0,<1.0.0
 numpy>=1.23.0,<2.0.0
 
-# Web realtime demo
+# Web / API
 fastapi>=0.116.0,<1.0.0
 uvicorn[standard]>=0.35.0,<1.0.0
 python-multipart>=0.0.6,<1.0.0
 python-dotenv>=1.0.0,<2.0.0
 mutagen>=1.47.0,<2.0.0
+requests>=2.31.0,<3.0.0
+pydantic>=2.0.0,<3.0.0
 
 # Note: torch, torchaudio, torchvision, and torchcodec should be installed
 # separately from the PyTorch index matching your CUDA version:
